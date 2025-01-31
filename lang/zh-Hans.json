@@ -1,0 +1,22 @@
+{
+  "menu.instruction": "[W/S] 滚动 - [D] 选择 - [A] 返回 - [Tab] 关闭",
+  "msg.playqueued": "{lightpurple}Music {white}>> 您的歌曲已进入播放队列，还需等待 {lightpurple}{0} {white}首歌曲。",
+  "msg.playalreadyinqueue": "{lightpurple}Music {white}>> {red}您已经有一首在队列中的歌曲。",
+  "msg.playremovequeue": "{lightpurple}Music {white}>> {lightpurple}{0} {white}已从队列中移除。",
+  "msg.queueinfostart": "{lightpurple}Music {white}>> 队列中的歌曲 (由先及后)：",
+  "msg.queueinfonone": "{lightpurple}Music {white}>> 队列中没有歌曲。",
+  "msg.queueinfoplaying": "{lightpurple}Music {white}>> 正在播放的歌曲: {0}",
+  "msg.queueinfo": "{lightpurple}Music {white}>> 队列第{0}首: {1}",
+  "msg.playnext": "{lightpurple}Music {white}>> 下一首歌曲: {0}",
+  "msg.playfailed": "{lightpurple}Music {white}>> {red}播放失败: {0}",
+  "msg.playstart": "{lightpurple}Music {white}>> 正在播放: {0}",
+  "msg.inputhint": "{lightpurple}Music {white}>> 请输入歌名或作者的关键词",
+  "msg.lyricon": "{lightpurple}Music {white}>> 歌词已开启",
+  "msg.lyricoff": "{lightpurple}Music {white}>> 歌词已关闭",
+  "msg.hearingon": "{lightpurple}Music {white}>> 声音已开启",
+  "msg.hearingoff": "{lightpurple}Music {white}>> 声音已关闭",
+  "msg.stopsuccess": "{lightpurple}Music {white}>> 已停止播放",
+  "msg.clearsuccess": "{lightpurple}Music {white}>> 已停止播放并清空队列",
+  "log.config.loading": "正在加载配置文件...",
+  "log.config.loaded": "配置文件加载完成"
+}
