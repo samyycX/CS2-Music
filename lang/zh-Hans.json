@@ -1,8 +1,11 @@
 {
   "menu.instruction": "[W/S] 滚动 - [D] 选择 - [A] 返回 - [Tab] 关闭",
+  "msg.insufficientcredit": "{lightpurple}Music {white}>> {red}您的积分不足，无法点歌。",
+  "msg.credit": "{lightpurple}Music {white}>> 已扣除 {0} 积分。",
+  "msg.creditrefund": "{lightpurple}Music {white}>> 已退回 {0} 积分。",
   "msg.playqueued": "{lightpurple}Music {white}>> 您的歌曲已进入播放队列，还需等待 {lightpurple}{0} {white}首歌曲。",
   "msg.playalreadyinqueue": "{lightpurple}Music {white}>> {red}您已经有一首在队列中的歌曲。",
-  "msg.playremovequeue": "{lightpurple}Music {white}>> {lightpurple}{0} {white}已从队列中移除。",
+  "msg.playremovequeue": "{lightpurple}Music {white}>> {lightpurple} 您的歌曲已从队列中移除。",
   "msg.queueinfostart": "{lightpurple}Music {white}>> 队列中的歌曲 (由先及后)：",
   "msg.queueinfonone": "{lightpurple}Music {white}>> 队列中没有歌曲。",
   "msg.queueinfoplaying": "{lightpurple}Music {white}>> 正在播放的歌曲: {0}",

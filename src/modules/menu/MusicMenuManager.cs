@@ -11,6 +11,7 @@ public static class MusicMenuManager
   public static WasdMyMenu GetMainMenu(CCSPlayerController player)
   {
     var menu = new WasdMyMenu { Title = "Music" };
+    var price = StoreApiManager.IsStoreApiAvailable() ? Music.Instance.Config.General.Price : 0;
     if (PlayManager.IsInQueue(player) || PlayManager.IsPlaying(player))
     {
       menu.AddOption(new TextOption
@@ -26,6 +27,7 @@ public static class MusicMenuManager
           {
             PlayManager.RemoveFromQueue(player);
             player.PrintToChat(Music.Instance.Localizer["msg.playremovequeue"]);
+            Music.RefundPlayer(player);
             MyMenuManager.CloseMenu(player);
           }
         });
@@ -35,9 +37,10 @@ public static class MusicMenuManager
     {
       menu.AddOption(new InputOption
       {
-        Text = "点歌",
+        Text = $"点歌 {(price > 0 ? $"[{price}积分]" : "")}",
         WaitingScreen = "请在聊天框输入歌名... (按Tab取消)",
         InputHint = Music.Instance.Localizer["msg.inputhint"],
+        Disabled = StoreApiManager.IsStoreApiAvailable() && StoreApiManager.GetStoreApi().GetPlayerCredits(player) < price,
         OnInput = (player, menu, input) =>
         {
           var thread = new Thread(() =>
@@ -59,11 +62,23 @@ public static class MusicMenuManager
                   Text = "确认",
                   Select = (player, option, menu) =>
                   {
+                    if (StoreApiManager.IsStoreApiAvailable())
+                    {
+                      var storeApi = StoreApiManager.GetStoreApi();
+                      if (storeApi.GetPlayerCredits(player) >= Music.Instance.Config.General.Price)
+                      {
+                        storeApi.SetPlayerCredits(player, storeApi.GetPlayerCredits(player) - Music.Instance.Config.General.Price);
+                      } else {
+                        player.PrintToChat(Music.Instance.Localizer["msg.insufficientcredit"]);
+                        return;
+                      }
+                    }
                     int position = PlayManager.AddToQueue(player, song);
                     if (position != 0)
                     {
                       player.PrintToChat(Music.Instance.Localizer["msg.playqueued", position]);
                     }
+                    player.PrintToChat(Music.Instance.Localizer["msg.credit", Music.Instance.Config.General.Price]);
                     MyMenuManager.CloseMenu(player);
                   }
                 });
@@ -118,7 +133,7 @@ public static class MusicMenuManager
         option.IsSelected = true;
       }
     });
-    if (AdminManager.PlayerHasPermissions(player, Config.GetConfig().AdminFlag))
+    if (AdminManager.PlayerHasPermissions(player, Music.Instance.Config.General.AdminFlag))
     {
       WasdMyMenu adminMenu = new WasdMyMenu { Title = "管理员控制" };
       adminMenu.AddOption(new SelectOption

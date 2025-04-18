@@ -7,6 +7,8 @@ public abstract class MenuOption
 {
   public string Text { get; set; } = "";
 
+  public bool Disabled { get; set; } = false;
+
   public abstract void Next(CCSPlayerController player, WasdMyMenu menu);
   public abstract bool Prev(CCSPlayerController player, WasdMyMenu menu);
 
@@ -102,6 +104,10 @@ public class WasdMyMenu
       return;
     }
     var option = Options[SelectedOption];
+    if (option.Disabled)
+    {
+      return;
+    }
     if (option is InputOption input)
     {
       MyMenuManager.GetPlayer(player.Slot).PendingInput = input;
@@ -145,6 +151,11 @@ public class WasdMyMenu
 
       }
 
+      if (Options[i].Disabled)
+      {
+        builder.AppendLine($"<font color='#808080'>{text}</font> <br>");
+        continue;
+      }
       if (i == SelectedOption)
       {
         builder.AppendLine($"<font color='#ccacfc'>⋆ {text}</font> <br>");
