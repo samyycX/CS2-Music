@@ -5,6 +5,8 @@ using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Commands;
+using CounterStrikeSharp.API.Modules.Admin;
+using CounterStrikeSharp.API.Modules.Cvars;
 using CounterStrikeSharp.API.Modules.Entities.Constants;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Memory.DynamicFunctions;
@@ -16,7 +18,7 @@ using MusicAPI;
 
 namespace Music;
 
-public class Music : BasePlugin
+public class Music : BasePlugin, IPluginConfig<MusicConfig>
 {
   public override string ModuleName => "Music";
   public override string ModuleVersion => "1.0.0";
@@ -25,16 +27,22 @@ public class Music : BasePlugin
   public override string ModuleDescription => "A music player plugin.";
 
   public static Music Instance { get; private set; } = null!;
+  public MusicConfig Config { get; set; } = new();
 
 
-  public override void Load(bool hotReload)
+  public void OnConfigParsed(MusicConfig config)
+  {
+    Config = config;
+    MusicWebAPI.Init(Config.MusicApi.NeteaseMusicCookie);
+  }
+
+    public override void Load(bool hotReload)
   {
     Instance = this;
     Log.Init(Logger, Localizer);
-    Config.Init(ModuleDirectory);
-    MusicWebAPI.Init(Config.GetConfig().MusicApi.CloudMusic.Cookie);
     PlayManager.Init();
-
+    StoreApiManager.Init();
+    
     RegisterListener<Listeners.OnMapStart>(OnMapStart);
     RegisterListener<Listeners.OnMapEnd>(OnMapEnd);
     RegisterListener<Listeners.OnClientPutInServer>(OnPlayerConnected);
@@ -51,7 +59,7 @@ public class Music : BasePlugin
       {
         return HookResult.Stop;
       }
-      return HookResult.Continue;
+      return HookResult.Continue; 
     }, HookMode.Pre);
 
 
@@ -109,5 +117,26 @@ public class Music : BasePlugin
   public void OnMusicCommand(CCSPlayerController player, CommandInfo info)
   {
     MyMenuManager.OpenMainMenu(player, MusicMenuManager.GetMainMenu(player));
+  }
+
+
+  [ConsoleCommand("css_musicreload")]
+  [RequiresPermissions("@css/admin")]
+  public void OnMusicReloadCommand(CCSPlayerController? player, CommandInfo info)
+  {
+    this.InitializeConfig(this, typeof(Music));
+    player?.PrintToChat("Music config reloaded.");
+    Console.WriteLine("Music config reloaded.");
+  }
+
+  public static void RefundPlayer(CCSPlayerController player)
+  {
+    if (StoreApiManager.IsStoreApiAvailable())
+    {
+      var storeApi = StoreApiManager.GetStoreApi();
+      int amount = (int)(Instance.Config.General.Price * Instance.Config.General.RefundRate);
+      storeApi.SetPlayerCredits(player, storeApi.GetPlayerCredits(player) + amount);
+      player.PrintToChat(Instance.Localizer["msg.creditrefund", amount]);
+    }
   }
 }

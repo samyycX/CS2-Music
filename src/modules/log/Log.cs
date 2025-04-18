@@ -38,7 +38,7 @@ public static class Log
 
   public static void LogDebug(string msg)
   {
-    if (Config.GetConfig().Debug)
+    if (Music.Instance.Config.General.Debug)
     {
       _Log(LogLevel.Debug, msg);
     }

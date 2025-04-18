@@ -13,7 +13,14 @@ public static class MusicWebAPI
 
   public static void Init(string cookie)
   {
-    NeteaseAPI.Headers.Add("Cookie", $"MUSIC_U={cookie}");
+    if (NeteaseAPI.Headers.ContainsKey("Cookie"))
+    {
+      NeteaseAPI.Headers["Cookie"] = $"MUSIC_U={cookie}";
+    }
+    else
+    {
+      NeteaseAPI.Headers.Add("Cookie", $"MUSIC_U={cookie}");
+    }
   }
 
   public static async Task<List<Song>> Search(Platform platform, string keyword, int limit, int page)

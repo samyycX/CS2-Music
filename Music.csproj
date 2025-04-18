@@ -13,20 +13,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.296" >
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.316">
       <IncludeAssets>compile</IncludeAssets>
     </PackageReference>
     <PackageReference Include="SkiaSharp" Version="3.116.1" />
-    <PackageReference Include="YamlDotNet" Version="16.2.1" />
+    <PackageReference Include="Tomlyn" Version="0.19.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Reference Include="MusicAPI">
       <HintPath>dependencies\MusicAPI.dll</HintPath>
     </Reference>
-      
+    <Reference Include="StoreAPI">
+      <HintPath>dependencies\StoreApi.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
     <None Update="lang\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Music.example.toml" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

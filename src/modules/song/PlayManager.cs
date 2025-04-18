@@ -113,15 +113,17 @@ public static class PlayManager
         {
           if (Utilities.GetPlayerFromSteamId(CurrentSong.PlayerSteamId) != null)
           {
+            Music.RefundPlayer(Utilities.GetPlayerFromSteamId(CurrentSong.PlayerSteamId)!);
             Utilities.GetPlayerFromSteamId(CurrentSong.PlayerSteamId)!.PrintToChat(Music.Instance.Localizer["msg.playfailed", CurrentSong.Song.Display()]);
             CurrentSong = null;
             PlayNext();
+            
           }
         });
         return;
       }
       var buffer = await httpClient.GetByteArrayAsync(CurrentSong.SongResource!.Url);
-      Audio.PlayFromBuffer(buffer, Config.GetConfig().Volume);
+      Audio.PlayFromBuffer(buffer, Music.Instance.Config.General.Volume);
       Server.NextFrame(() =>
       {
         Server.PrintToChatAll(Music.Instance.Localizer["msg.playstart", CurrentSong.Song.Display()]);
@@ -132,6 +134,7 @@ public static class PlayManager
       Log.LogError(e.Message);
       Server.NextFrame(() =>
       {
+        Music.RefundPlayer(Utilities.GetPlayerFromSteamId(CurrentSong.PlayerSteamId)!);
         Server.PrintToChatAll(Music.Instance.Localizer["msg.playfailed", CurrentSong.Song.Display()]);
         CurrentSong = null;
         PlayNext();
@@ -167,7 +170,7 @@ public static class PlayManager
   {
     Server.NextFrame(() =>
     {
-      if (Config.GetConfig().Debug)
+      if (Music.Instance.Config.General.Debug)
       {
         Server.PrintToChatAll("Audio::PlayStart");
       }
@@ -195,7 +198,7 @@ public static class PlayManager
   {
     Server.NextFrame(() =>
     {
-      if (Config.GetConfig().Debug)
+      if (Music.Instance.Config.General.Debug)
       {
         Server.PrintToChatAll("Audio::PlayEnd");
       }
@@ -248,7 +251,7 @@ public static class PlayManager
     });
     if (CurrentSong != null)
     {
-      CurrentSong.Progress += Config.GetConfig().LyricInterval;
+      CurrentSong.Progress += Music.Instance.Config.General.LyricInterval;
     }
   }
 
