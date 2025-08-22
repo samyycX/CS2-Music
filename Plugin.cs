@@ -15,6 +15,7 @@ using CounterStrikeSharp.API.Modules.UserMessages;
 using CounterStrikeSharp.API.Modules.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using MusicAPI;
+using System.Text;
 
 namespace Music;
 
@@ -36,13 +37,13 @@ public class Music : BasePlugin, IPluginConfig<MusicConfig>
     MusicWebAPI.Init(Config.MusicApi.NeteaseMusicCookie);
   }
 
-    public override void Load(bool hotReload)
+  public override void Load(bool hotReload)
   {
     Instance = this;
     Log.Init(Logger, Localizer);
     PlayManager.Init();
     StoreApiManager.Init();
-    
+
     RegisterListener<Listeners.OnMapStart>(OnMapStart);
     RegisterListener<Listeners.OnMapEnd>(OnMapEnd);
     RegisterListener<Listeners.OnClientPutInServer>(OnPlayerConnected);
@@ -59,20 +60,20 @@ public class Music : BasePlugin, IPluginConfig<MusicConfig>
       {
         return HookResult.Stop;
       }
-      return HookResult.Continue; 
+      return HookResult.Continue;
     }, HookMode.Pre);
 
 
     if (hotReload)
     {
-      HudLyricManager.Recollect();
+      // HudLyricManager.Recollect();
       MyMenuManager.ReloadPlayer();
     }
   }
 
   public void OnMapStart(string map)
   {
-    HudLyricManager.Reload();
+    // HudLyricManager.Reload();
   }
 
   public void OnMapEnd()
@@ -82,7 +83,7 @@ public class Music : BasePlugin, IPluginConfig<MusicConfig>
 
   public void CheckTransmit(CCheckTransmitInfoList infoList)
   {
-    HudLyricManager.CheckTransmit(infoList);
+    // HudLyricManager.CheckTransmit(infoList);
   }
 
   public void OnPlayerConnected(int slot)
@@ -92,19 +93,19 @@ public class Music : BasePlugin, IPluginConfig<MusicConfig>
 
   public HookResult OnPlayerSpawn(EventPlayerSpawn @event, GameEventInfo info)
   {
-    HudLyricManager.InitPlayer(@event.Userid!.Slot);
+    // HudLyricManager.InitPlayer(@event.Userid!.Slot);
     return HookResult.Continue;
   }
 
   public void OnPlayerDisconnect(int slot)
   {
-    HudLyricManager.RemovePlayer(slot);
+    // HudLyricManager.RemovePlayer(slot);
     MyMenuManager.RemovePlayer(slot);
   }
 
   public void OnTick()
   {
-    HudLyricManager.Update();
+    // HudLyricManager.Update();
     MyMenuManager.Update();
   }
 
@@ -139,4 +140,46 @@ public class Music : BasePlugin, IPluginConfig<MusicConfig>
       player.PrintToChat(Instance.Localizer["msg.creditrefund", amount]);
     }
   }
+
+  // Murmurhash2 with seed 0x53524332
+  public static uint CalculateSoundEventHash(string soundEventName)
+  {
+    byte[] bytes = Encoding.UTF8.GetBytes(soundEventName.ToLower());
+    uint seed = 0x50524748;
+    uint m = 0x5bd1e995;
+    int r = 24;
+
+    uint length = (uint)bytes.Length;
+    uint hash = seed ^ length;
+
+    int index = 0;
+    while (length >= 4)
+    {
+      uint k = BitConverter.ToUInt32(bytes, index);
+
+      k *= m;
+      k ^= k >> r;
+      k *= m;
+
+      hash *= m;
+      hash ^= k;
+
+      index += 4;
+      length -= 4;
+    }
+
+    switch (length)
+    {
+      case 3: hash ^= (uint)bytes[index + 2] << 16; goto case 2;
+      case 2: hash ^= (uint)bytes[index + 1] << 8; goto case 1;
+      case 1: hash ^= bytes[index]; hash *= m; break;
+    }
+
+    hash ^= hash >> 13;
+    hash *= m;
+    hash ^= hash >> 15;
+
+    return hash;
+  }
+
 }

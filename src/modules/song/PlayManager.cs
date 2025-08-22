@@ -202,8 +202,8 @@ public static class PlayManager
       {
         Server.PrintToChatAll("Audio::PlayEnd");
       }
-      HudLyricManager.UpdateOriginal("");
-      HudLyricManager.UpdateTranslation("");
+      // HudLyricManager.UpdateOriginal("");
+      // HudLyricManager.UpdateTranslation("");
       CurrentSong = null;
       PlayNext();
     });
@@ -229,7 +229,7 @@ public static class PlayManager
       var line = CurrentSong.Lyric[CurrentSong.LastLyric];
       float fullTime = (float)(CurrentSong.LastLyric == CurrentSong.Lyric.Count() - 1 ? CurrentSong.SongResource.Duration : CurrentSong.Lyric[CurrentSong.LastLyric + 1].Time) - line.Time;
       float progress = (CurrentSong.Progress - line.Time) / fullTime;
-      HudLyricManager.UpdateOriginal(line.Content);
+      // HudLyricManager.UpdateOriginal(line.Content);
 
       if (CurrentSong.TranslatedLyric == null) return;
       var nextTranslatedLine = CurrentSong.LastTranslatedLyric == CurrentSong.TranslatedLyric.Count() - 1 ? null : CurrentSong.TranslatedLyric[CurrentSong.LastTranslatedLyric + 1];
@@ -247,7 +247,7 @@ public static class PlayManager
       }
       if (CurrentSong.LastTranslatedLyric == -1) return;
       var translatedLine = CurrentSong.TranslatedLyric[CurrentSong.LastTranslatedLyric];
-      HudLyricManager.UpdateTranslation(translatedLine.Content);
+      // HudLyricManager.UpdateTranslation(translatedLine.Content);
     });
     if (CurrentSong != null)
     {
