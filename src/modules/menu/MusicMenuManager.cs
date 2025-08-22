@@ -40,7 +40,7 @@ public static class MusicMenuManager
         Text = $"点歌 {(price > 0 ? $"[{price}积分]" : "")}",
         WaitingScreen = "请在聊天框输入歌名... (按Tab取消)",
         InputHint = Music.Instance.Localizer["msg.inputhint"],
-        Disabled = StoreApiManager.IsStoreApiAvailable() && StoreApiManager.GetStoreApi().GetPlayerCredits(player) < price,
+        Disabled = false,
         OnInput = (player, menu, input) =>
         {
           var thread = new Thread(() =>
@@ -62,17 +62,7 @@ public static class MusicMenuManager
                   Text = "确认",
                   Select = (player, option, menu) =>
                   {
-                    if (StoreApiManager.IsStoreApiAvailable())
-                    {
-                      var storeApi = StoreApiManager.GetStoreApi();
-                      if (storeApi.GetPlayerCredits(player) >= Music.Instance.Config.General.Price)
-                      {
-                        storeApi.SetPlayerCredits(player, storeApi.GetPlayerCredits(player) - Music.Instance.Config.General.Price);
-                      } else {
-                        player.PrintToChat(Music.Instance.Localizer["msg.insufficientcredit"]);
-                        return;
-                      }
-                    }
+
                     int position = PlayManager.AddToQueue(player, song);
                     if (position != 0)
                     {
@@ -115,14 +105,14 @@ public static class MusicMenuManager
     });
     menu.AddOption(new MultiSelectOption
     {
-      Text = "歌词: " + (HudLyricManager.IsDisplaying(player.Slot) ? "开" : "关"),
-      Select = (player, option, menu) =>
-      {
-        HudLyricManager.ToggleDisplaying(player.Slot);
-        option.Text = "歌词: " + (HudLyricManager.IsDisplaying(player.Slot) ? "开" : "关");
-        player.PrintToChat(HudLyricManager.IsDisplaying(player.Slot) ? Music.Instance.Localizer["msg.lyricon"] : Music.Instance.Localizer["msg.lyricoff"]);
-        option.IsSelected = true;
-      }
+      // Text = "歌词: " + (HudLyricManager.IsDisplaying(player.Slot) ? "开" : "关"),
+      // Select = (player, option, menu) =>
+      // {
+      //   HudLyricManager.ToggleDisplaying(player.Slot);
+      //   option.Text = "歌词: " + (HudLyricManager.IsDisplaying(player.Slot) ? "开" : "关");
+      //   player.PrintToChat(HudLyricManager.IsDisplaying(player.Slot) ? Music.Instance.Localizer["msg.lyricon"] : Music.Instance.Localizer["msg.lyricoff"]);
+      //   option.IsSelected = true;
+      // }
     });
     menu.AddOption(new MultiSelectOption
     {

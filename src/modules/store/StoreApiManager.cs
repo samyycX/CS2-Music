@@ -5,14 +5,17 @@ namespace Music;
 
 public static class StoreApiManager
 {
-    public static PluginCapability<IStoreApi?> StoreApi { get; private set; } = new("store:api");
+    public static PluginCapability<IStoreApi?> StoreApi { get; private set; }
 
     private static IStoreApi? _StoreApi;
     public static void Init()
     {
-        _StoreApi = StoreApi.Get();
-        if (_StoreApi == null)
+        try
         {
+            StoreApi = new("store:api");
+            _StoreApi = StoreApi.Get();
+        } catch (Exception)
+    {
             Log.LogWarning("未找到 Store 插件，已关闭相关功能，不影响正常使用。");
         }
     }
